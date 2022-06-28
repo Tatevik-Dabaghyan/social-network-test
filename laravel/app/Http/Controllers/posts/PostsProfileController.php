@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Posts;
+use App\Http\Controllers\Controller;
+use App\Models\Post;
 
 use Illuminate\Http\Request;
 
@@ -13,10 +15,9 @@ class PostsProfileController extends Controller
      */
     public function index()
     {
-        $posts = Post::orderBy('created_at', 'desc')->get();
-        $posts = ['post1', 'post2', 'post3'];
+        $posts = Post::query()->orderBy('created_at', 'desc')->get();
 
-        return view('index')->with('posts', $posts);
+        return view('posts.index')->with('posts', $posts);
     }
 
     /**
@@ -27,6 +28,7 @@ class PostsProfileController extends Controller
     public function create()
     {
         //
+        return 123;
     }
 
     /**
@@ -48,9 +50,9 @@ class PostsProfileController extends Controller
      */
     public function show($id)
     {
-        //$post = Post::find($id);
+        $posts = Post::query()->where('user_id', $id)->orderBy('created_at', 'desc')->get();
 
-        //return view('show')->with('post', $post);
+        return view('posts.index')->with('posts', $posts);
     }
 
     /**

@@ -1,4 +1,4 @@
-@extends('laravel.resources.views.layouts.app')
+@extends('layouts.app')
 
 @section('content')
     <h1>Home page</h1>

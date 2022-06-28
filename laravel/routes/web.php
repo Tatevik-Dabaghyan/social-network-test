@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Posts\PostsProfileController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,10 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/profile/{authUserId}', [PostsProfileController::class, 'index']);
 
-Route::resource('posts', 'PostsProfileController');
-Route::resource('posts', 'PostsFeedController');
-Route::resource('posts', 'PostsChannelController');
+/*Route::resource([
+    'profile' => PostsProfileController::class,
+    'feed' => PostsProfileController::class,
+]);*/
+
+Route::resource('profile', PostsProfileController::class);
+//Route::resource('posts', 'PostsChannelController');
