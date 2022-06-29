@@ -15,12 +15,4 @@ use App\Http\Controllers\Posts\PostsProfileController;
 |
 */
 
-//Route::get('/profile/{authUserId}', [PostsProfileController::class, 'index']);
-
-/*Route::resource([
-    'profile' => PostsProfileController::class,
-    'feed' => PostsProfileController::class,
-]);*/
-
 Route::resource('profile', PostsProfileController::class);
-//Route::resource('posts', 'PostsChannelController');

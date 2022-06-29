@@ -15,7 +15,8 @@ class PostsProfileController extends Controller
      */
     public function index()
     {
-        $posts = Post::query()->orderBy('created_at', 'desc')->get();
+        $authUserId = 1;
+        $posts = Post::query()->where('user_id', $authUserId)->orderBy('created_at', 'desc')->get();
 
         return view('posts.index')->with('posts', $posts);
     }
@@ -27,8 +28,7 @@ class PostsProfileController extends Controller
      */
     public function create()
     {
-        //
-        return 123;
+        return view('posts.create');
     }
 
     /**
@@ -39,7 +39,17 @@ class PostsProfileController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /* $this->validate($request, [
+            'text' => 'required'
+        ]); */
+        $authUserId = 1;
+
+        $post = new Post();
+        $post->user_id = $authUserId;
+        $post->text = $request->input('text');
+        $post->save();
+
+        return redirect()->to('/profile')->with('success', 'Post created successfully.');
     }
 
     /**
@@ -50,9 +60,7 @@ class PostsProfileController extends Controller
      */
     public function show($id)
     {
-        $posts = Post::query()->where('user_id', $id)->orderBy('created_at', 'desc')->get();
-
-        return view('posts.index')->with('posts', $posts);
+        //
     }
 
     /**
@@ -63,7 +71,9 @@ class PostsProfileController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::find($id);
+
+        return view('posts.edit')->with('post', $post);
     }
 
     /**
@@ -75,7 +85,15 @@ class PostsProfileController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        /* $this->validate($request, [
+            'text' => 'required'
+        ]); */
+
+        $post = Post::find($id);
+        $post->text = $request->input('text');
+        $post->save();
+
+        return redirect()->to('/profile')->with('success', 'Post edited successfully.');
     }
 
     /**
@@ -86,6 +104,9 @@ class PostsProfileController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::find($id);
+        $post->delete();
+
+        return redirect()->to('/profile')->with('success', 'Post deleted successfully.');
     }
 }
