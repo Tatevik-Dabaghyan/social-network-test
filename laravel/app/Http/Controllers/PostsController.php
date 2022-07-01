@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
+use App\Models\Media;
 use App\Models\Post;
 
 use Illuminate\Http\Request;
@@ -44,9 +45,23 @@ class PostsController extends Controller
         ]); */
         $authUserId = 1;
 
-        $post = new Post();
+        /*$post = new Post();
         $post->user_id = $authUserId;
-        $post->text = $request->input('text');
+        $post->text = $request->input('text');*/
+
+        //uploading files
+        $media = new Media();
+
+        $filenameWithExtention = $request->file('media')->getClientOriginalName();
+        $filename = pathinfo($filenameWithExtention, PATHINFO_FILENAME);
+        $fileExtention = $request->file('media')->getClientOriginalExtension();
+        $fileMimeType = $request->file('media')->getMimeType();
+        $fileType = explode('/', $fileMimeType)[0];
+        dd($filenameWithExtention, $filename, $fileExtention, $fileMimeType, $fileType);
+
+        $media->user_id = $authUserId;
+        $media->source = $request->input('media');
+        $media->type = $request->input('media');
         $post->save();
 
         return redirect()->to('/profile')->with('success', 'Post created successfully.');
