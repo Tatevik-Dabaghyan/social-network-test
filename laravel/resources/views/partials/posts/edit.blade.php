@@ -7,7 +7,7 @@
         @csrf
         @method('PUT')
 
-        <input type="text" name="text" >
+        <input type="text" name="text" value="{{$post->text}}">
         <input type="submit">
     </form>
 

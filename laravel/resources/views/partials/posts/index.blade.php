@@ -1,13 +1,9 @@
-@extends('layouts.app')
+<h1>Profile posts</h1>
+<button>
+    <a href="/profile/create">New post</a>
+</button>
 
-@section('content')
-    <h1>Profile posts</h1>
-    <button>
-        <a href="/profile/create">New post</a>
-    </button>
-
-
-    @if (count($posts) > 0)
+@if (count($posts) > 0)
     @foreach($posts as $post)
         <div class="post">
             <p>Post ID: {{$post->id}}</p>
@@ -16,6 +12,7 @@
             <p>Post created_at: {{$post->created_at}}</p>
             <p>Post updated_at: {{$post->updated_at}}</p>
             <p>Post deleted_at: {{$post->deleted_at}}</p>
+
 
             <button>
                 <a href="/profile/{{$post->id}}/edit">edit</a>
@@ -30,8 +27,8 @@
             </form>
         </div>
     @endforeach
-    @else
-        <p>No posts!</p>
-    @endif
+@else
+    <p>No posts!</p>
+@endif
 
-@endsection
+

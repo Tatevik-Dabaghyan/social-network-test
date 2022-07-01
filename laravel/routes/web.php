@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Posts\PostsProfileController;
+use App\Http\Controllers\PostsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +15,4 @@ use App\Http\Controllers\Posts\PostsProfileController;
 |
 */
 
-Route::resource('profile', PostsProfileController::class);
+Route::resource('profile', PostsController::class);
