@@ -29,7 +29,7 @@ class PostsController extends Controller
      */
     public function create()
     {
-        return view('profile.index');
+        //
     }
 
     /**
@@ -45,12 +45,12 @@ class PostsController extends Controller
         ]); */
         $authUserId = 1;
 
-        /*$post = new Post();
+        $post = new Post();
         $post->user_id = $authUserId;
-        $post->text = $request->input('text');*/
+        $post->text = $request->input('text');
 
         //uploading files
-        $media = new Media();
+        /*$media = new Media();
 
         $filenameWithExtention = $request->file('media')->getClientOriginalName();
         $filename = pathinfo($filenameWithExtention, PATHINFO_FILENAME);
@@ -61,7 +61,7 @@ class PostsController extends Controller
 
         $media->user_id = $authUserId;
         $media->source = $request->input('media');
-        $media->type = $request->input('media');
+        $media->type = $request->input('media');*/
         $post->save();
 
         return redirect()->to('/profile')->with('success', 'Post created successfully.');
@@ -88,7 +88,10 @@ class PostsController extends Controller
     {
         $post = Post::find($id);
 
-        return view('posts.edit')->with('post', $post);
+        $authUserId = 1;
+        $posts = Post::query()->where('user_id', $authUserId)->orderBy('created_at', 'desc')->get();
+
+        return view('profile.index')->with('post', $post)->with('posts', $posts);
     }
 
     /**

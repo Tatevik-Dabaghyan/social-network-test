@@ -5,5 +5,5 @@
 
     <input type="text" name="text">
     <input type="file" name="media">
-    <input type="submit">
+    <input type="submit" value="New post">
 </form>
