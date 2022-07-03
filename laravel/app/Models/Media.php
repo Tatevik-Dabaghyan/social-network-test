@@ -12,4 +12,11 @@ class Media extends Model
     protected $fillable = [
         'source', 'user_id', 'type', 'mime_type',
     ];
+
+    public function posts()
+    {
+        //todo:must be refactored. many to many rel.
+
+        return $this->belongsToMany(Media_Post::class);
+    }
 }

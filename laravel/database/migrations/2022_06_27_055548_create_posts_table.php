@@ -19,7 +19,7 @@ return new class extends Migration
             $table->mediumText('text')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

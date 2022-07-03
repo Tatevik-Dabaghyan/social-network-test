@@ -13,4 +13,11 @@ class Post extends Model
     protected $fillable = [
         'text',
     ];
+
+    public function media()
+    {
+        //todo:must be refactored. many to many rel.
+
+        return $this->hasMany(Media_Post::class);
+    }
 }

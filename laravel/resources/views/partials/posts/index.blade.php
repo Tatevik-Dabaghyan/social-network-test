@@ -9,6 +9,10 @@
             <p>Post updated_at: {{$post->updated_at}}</p>
             <p>Post deleted_at: {{$post->deleted_at}}</p>
 
+            @if(isset($post->source))
+                <img src="/storage/public/media/{{ $post->source }}" alt="">
+            @endif
+
             <button>
                 <a href="/profile/{{$post->id}}/edit">edit</a>
             </button>
