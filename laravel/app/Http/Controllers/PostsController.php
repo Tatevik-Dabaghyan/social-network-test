@@ -1,16 +1,21 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Http\Controllers\Controller;
+
 use App\Models\Media;
 use App\Models\Post;
-use App\Models\Media_Post;
+use App\Services\PostService;
+use App\Helpers\MediaFile;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class PostsController extends Controller
 {
+    public function __construct(
+        private PostService $postService,
+        private int $authUserId = 1
+    ){}
+
     /**
      * Display a listing of the resource.
      *
@@ -18,20 +23,11 @@ class PostsController extends Controller
      */
     public function index()
     {
-        $authUserId = 1;
+        $posts = $this->postService->listAuthPosts($this->authUserId);
 
-        $posts = DB::table('posts')
-            ->leftJoin('media_post', 'posts.id', '=', 'media_post.post_id')
-            ->leftJoin('media', 'media.id', '=', 'media_post.media_id')
-            ->select('posts.*', 'media.source', 'media.type')
-            ->where('posts.user_id', $authUserId)->orderBy('posts.created_at', 'desc')->get();
-
-        //dd($posts);
-        //$posts = Post::query()->where('user_id', $authUserId)->orderBy('created_at', 'desc')->get();
-
-        return view('profile.index',[
+        return view('profile.index', [
             'posts' => $posts,
-            ]);
+        ]);
     }
 
     /**
@@ -47,50 +43,33 @@ class PostsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        /* $this->validate($request, [
-            'text' => 'required'
-        ]); */
-        $authUserId = 1;
-
-        $post = new Post();
-        $post->user_id = $authUserId;
-        $post->text = $request->input('text');
-        $post->save();
+        $post = $this->postService->savePost
+        (
+            [
+                'user_id' => $this->authUserId,
+                'text' => $request->input('text'),
+            ]
+        );
 
         //uploading files
-        $media = new Media();
+        $mediaFile = new MediaFile($request);
 
-        $filenameWithExtention = $request->file('media')->getClientOriginalName();
-        $filename = pathinfo($filenameWithExtention, PATHINFO_FILENAME);
-        $fileExtention = $request->file('media')->getClientOriginalExtension();
-        $fileMimeType = $request->file('media')->getMimeType();
-        $fileType = explode('/', $fileMimeType)[0];
+        $request->media->storeAs('public/media', $mediaFile->filenameToStore);
 
-        //dd($request->media);
-        //dd($filenameWithExtention, $filename, $fileExtention, $fileMimeType, $fileType);
+        $media = Media::create([
+            'user_id' => $this->authUserId,
+            'source' => $mediaFile->filenameToStore,
+            'type' => $mediaFile->fileType,
+            'mime_type' => $mediaFile->fileMimeType,
+        ]);
 
-        $filenameToStore = time() . '.' . $fileExtention;
-        $request->media->storeAs('public/media', $filenameToStore);
-
-        $media->user_id = $authUserId;
-        $media->source = $filenameToStore;
-        $media->type = $fileType;
-        $media->mime_type = $fileMimeType;
-        $media->save();
-
-        //insert relational data into media_post table
-
-        //todo:must be refactored. many to many rel.
-
-        $mediaPost = new Media_Post();
-        $mediaPost->media_id = $media->id;
-        $mediaPost->post_id = $post->id;
-        $mediaPost->save();
+         //insert relational data into media_post table
+         $post->media()->attach($media->id);
 
         return redirect()->to('/profile')->with('success', 'Post created successfully.');
     }
@@ -98,7 +77,7 @@ class PostsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -109,7 +88,7 @@ class PostsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -128,8 +107,8 @@ class PostsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -148,7 +127,7 @@ class PostsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

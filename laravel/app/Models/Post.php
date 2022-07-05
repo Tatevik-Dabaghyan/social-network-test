@@ -11,13 +11,17 @@ class Post extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'user_id',
         'text',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function media()
     {
-        //todo:must be refactored. many to many rel.
-
-        return $this->hasMany(Media_Post::class);
+        return $this->belongsToMany(Media::class);
     }
 }

@@ -17,6 +17,6 @@ class Media extends Model
     {
         //todo:must be refactored. many to many rel.
 
-        return $this->belongsToMany(Media_Post::class);
+        return $this->belongsToMany(Post::class);
     }
 }

@@ -20,7 +20,6 @@ return new class extends Migration
             $table->enum('type', array('image', 'video', 'audio', 'pdf'));
             $table->string('mime_type');
             $table->timestamps();
-            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

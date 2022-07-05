@@ -17,6 +17,8 @@
 </head>
 <body>
 
+<img src="storage/1656852262.jpg" alt="">
+
 @yield('content')
 
 </body>
