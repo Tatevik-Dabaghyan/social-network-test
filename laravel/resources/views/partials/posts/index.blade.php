@@ -9,9 +9,13 @@
             <p>Post updated_at: {{$post->updated_at}}</p>
             <p>Post deleted_at: {{$post->deleted_at}}</p>
 
-            @if(isset($post->pivot->source))
-                <img src="{{ $post->pivot->source }}" alt="">
-            @endif
+            @foreach($post->media as $media)
+                @if(isset($media->source))
+                    <p>Media source: {{ $media->source }}</p>
+                    <p>Media type: {{ $media->type }}</p>
+                    <img src="{{ $media->source }}" alt="">
+                @endif
+            @endforeach
 
             <button>
                 <a href="/profile/{{$post->id}}/edit">edit</a>

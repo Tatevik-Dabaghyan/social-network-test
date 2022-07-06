@@ -26,7 +26,7 @@ class PostRepository implements IPostRepository
         return $this->post->create($request);
     }
 
-    public function update($id, array $updateingDetails): Collection
+    public function update($id, array $updateingDetails): int
     {
         return $this->post->whereId($id)->update($updateingDetails);
     }
@@ -38,7 +38,8 @@ class PostRepository implements IPostRepository
 
     public function getByAuthUserId($authUserId): Collection
     {
-        return $this->post->where('user_id', $authUserId)->get();
+        $posts = $this->post->where('user_id', $authUserId)->with('media')->orderBy('created_at', 'desc')->get();
+        return $posts;
     }
 
 }

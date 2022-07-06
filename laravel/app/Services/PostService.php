@@ -23,4 +23,19 @@ class PostService
         return $this->postRepository->store($post);
     }
 
+    public function getPost(int $postId)
+    {
+        return $this->postRepository->getById($postId);
+    }
+
+    public function saveUpdate($postId, array $updateingDetails)
+    {
+        return $this->postRepository->update($postId, $updateingDetails);
+    }
+
+    public function deletePost($postId)
+    {
+        return $this->postRepository->deleteById($postId);
+    }
+
 }

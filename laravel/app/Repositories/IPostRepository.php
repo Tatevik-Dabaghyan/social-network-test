@@ -12,7 +12,7 @@ interface IPostRepository
 
     public function store(array $request): Post;
 
-    public function update($id, array $updateingDetails): Collection;
+    public function update($id, array $updateingDetails): int;
 
     public function deleteById($id): int;
 

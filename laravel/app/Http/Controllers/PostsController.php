@@ -9,12 +9,16 @@ use App\Helpers\MediaFile;
 
 use Illuminate\Http\Request;
 
+//use Illuminate\Support\Facades\Storage;
+
 class PostsController extends Controller
 {
     public function __construct(
         private PostService $postService,
-        private int $authUserId = 1
-    ){}
+        private int         $authUserId = 1
+    )
+    {
+    }
 
     /**
      * Display a listing of the resource.
@@ -48,6 +52,8 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
+        //todo: validate Request data
+
         $post = $this->postService->savePost
         (
             [
@@ -59,17 +65,20 @@ class PostsController extends Controller
         //uploading files
         $mediaFile = new MediaFile($request);
 
+        //Storage::disk('local')->putFileAs('public', $request->file('media'), $mediaFile->filenameToStore);
         $request->media->storeAs('public/media', $mediaFile->filenameToStore);
 
-        $media = Media::create([
-            'user_id' => $this->authUserId,
-            'source' => $mediaFile->filenameToStore,
-            'type' => $mediaFile->fileType,
-            'mime_type' => $mediaFile->fileMimeType,
-        ]);
+        $media = Media::create(
+            [
+                'user_id' => $this->authUserId,
+                'source' => $mediaFile->filenameToStore,
+                'type' => $mediaFile->fileType,
+                'mime_type' => $mediaFile->fileMimeType,
+            ]
+        );
 
-         //insert relational data into media_post table
-         $post->media()->attach($media->id);
+        //insert relational data into media_post table
+        $post->media()->attach($media->id);
 
         return redirect()->to('/profile')->with('success', 'Post created successfully.');
     }
@@ -91,12 +100,10 @@ class PostsController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
-        $post = Post::find($id);
-
-        $authUserId = 1;
-        $posts = Post::query()->where('user_id', $authUserId)->orderBy('created_at', 'desc')->get();
+        $post = $this->postService->getPost($id);
+        $posts = $this->postService->listAuthPosts($this->authUserId);
 
         return view('profile.index', [
             'post' => $post,
@@ -113,13 +120,16 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //todo: validate Request data
         /* $this->validate($request, [
             'text' => 'required'
         ]); */
 
-        $post = Post::find($id);
-        $post->text = $request->input('text');
-        $post->save();
+        $this->postService->saveUpdate($id,
+            [
+                'text' => $request->input('text'),
+            ]
+        );
 
         return redirect()->to('/profile')->with('success', 'Post edited successfully.');
     }
@@ -132,8 +142,7 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        $post = Post::find($id);
-        $post->delete();
+        $this->postService->deletePost($id);
 
         return redirect()->to('/profile')->with('success', 'Post deleted successfully.');
     }
